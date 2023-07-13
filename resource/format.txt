@@ -1,0 +1,60 @@
+# 用户信息：
+id password department name rank
+
+// id：第1位为用户类别，0-挂号收费员，1-门诊医生，2-医技医生，3-药房操作员；后5位为员工号
+// department：用户所在科室
+// rank：门诊、医技医生的职称，0-主任医师，1-副主任医师，2-主治医师，3-住院医师
+
+
+
+
+# 挂号输入信息：
+name gender id registerLevel department doctorID needHistoryBook
+
+
+
+
+# 金额：
+输入、输出：String，单位为“元”
+存储时：String，单位为“分”
+计算时：int，单位为“分”
+
+
+
+
+
+# 发票：
+----------发票联----------
+itemName：￥fee
+itemName：￥fee
+……
+>>>>>>>>>>>>>>>>>>>>
+总计：￥sum
+实收：￥received
+找零：￥change
+-------------------------
+
+
+
+
+# 患者病历：
+
+文件名：patientID_doctorID
+
+文件内容：
+name gender id registerLevel department needHistoryBook isDiagnosed
+{"主诉":"","现病史":"","既往史":"","初步诊断":[{"ICD编码":"","疾病名称":""},...],"检查建议":"","注意事项":""}  // diagnosis
+{"":"","":"",}  // examination
+{}  // test
+{}  // treatment
+{}  // medicine
+
+
+
+
+# 药品信息：
+
+
+
+
+# 检查项目：
