@@ -1,8 +1,6 @@
+package his.user;
+
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * 门诊医生

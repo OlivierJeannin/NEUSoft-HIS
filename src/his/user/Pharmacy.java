@@ -1,3 +1,5 @@
+package his.user;
+
 /**
  * 药房
  *

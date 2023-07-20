@@ -1,4 +1,10 @@
+package his.user;
+
+import his.Patient;
+
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 挂号收费员
@@ -6,40 +12,6 @@ import java.io.*;
  * <p>登录账号后，选择执行挂号、退号、收费、退费、打印发票流程。</p>
  */
 class Registrar extends User {
-
-    /**
-     * 从文件中读取下一个病历号
-     */
-    public static String readNextPatientID() throws IOException {
-        File f = new File("./resource/next_patient_id.txt");
-        Reader fileReader = new FileReader(f);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        String nextPatientID;
-        try {
-            nextPatientID = bufferedReader.readLine();
-        }
-        finally {
-            bufferedReader.close();
-            fileReader.close();
-        }
-        return nextPatientID;
-    }
-
-    /**
-     * 将下一个病历号写入文件
-     */
-    public static void writeNextPatientID(String nextPatientID) throws IOException {
-        File f = new File("./resource/next_patient_id.txt");
-        Writer fileWriter = new FileWriter(f);
-        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-        try {
-            bufferedWriter.write(nextPatientID);
-        }
-        finally {
-            bufferedWriter.close();
-            fileWriter.close();
-        }
-    }
 
     /**
      * 金额形式转换（展示给用户的形式 -> 程序中运算、储存的形式）
@@ -127,20 +99,19 @@ class Registrar extends User {
      */
     public static void register() throws IOException {
         System.out.println("----------挂号登记----------");
+        String[] registerInfoKeys = {"姓名","性别","身份证号","挂号级别","挂号科室","挂号医生","是否需要病历本"};
 
         // 输入患者信息
         // todo 以“名值对”的格式输入信息，再将值匹配到对应的位置上
         // todo 校验输入值
-        String name = scanner.next();
-        String gender = scanner.next();
-        String id = scanner.next();
-        String registerLevel = scanner.next();
-        String department = scanner.next();
-        String doctorID = scanner.next();
-        boolean needHistoryBook = scanner.nextBoolean();
+        Map<String, String> registerInfo = new HashMap<>();
+        for (String key : registerInfoKeys) {
+            System.out.println(key+"：");
+            registerInfo.put(key, scanner.next());
+        }
 
         // 填写发票信息
-        String registerFee = moneyInt2DecimalString(calculateRegisterFee(registerLevel, needHistoryBook));
+        String registerFee = moneyInt2DecimalString(calculateRegisterFee(registerInfo.get("挂号级别"), Boolean.parseBoolean(registerInfo.get("是否需要病历本"))));
         System.out.println("应收挂号费：￥" + registerFee);
 
 //        System.out.println("实收：");
@@ -149,20 +120,18 @@ class Registrar extends User {
         System.out.print("确认：");
         if (scanner.next().equals("y")) {
 //            printReceipt(new String[]{"挂号费 " + registerFee}, received);  // 打印发票
-            // 分配病历号
-            String patientID = readNextPatientID();
-            writeNextPatientID(String.format("%06d", Integer.parseInt(patientID) + 1));  // 更新 nextPatientID
+            Patient patient = new Patient(registerInfo);
             // 挂号信息写入文件
-            File f = new File("./resource/patient/" + patientID + "_" + doctorID);
-            Writer fileWriter = new FileWriter(f);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            File f = new File("./resource/patient/" + patient.ID + "_" + registerInfo.get("挂号医生"));
+            OutputStream fileOutputStream = new FileOutputStream(f);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
             try {
-                bufferedWriter.write(name + ' ' + gender + ' ' + id + ' ' + registerLevel + ' ' + department + ' ' + needHistoryBook + ' ' + false + '\n');
-                bufferedWriter.flush();
+                objectOutputStream.writeObject(patient);
+                objectOutputStream.flush();
             }
             finally {
-                bufferedWriter.close();
-                fileWriter.close();
+                objectOutputStream.close();
+                fileOutputStream.close();
             }
             System.out.println("挂号完成！");
         }
