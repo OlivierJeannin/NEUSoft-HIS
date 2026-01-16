@@ -1,0 +1,9 @@
+*
+!.gitignore
+!README.md
+!src/
+!src/*
+!src/**/*
+!resource/
+!resource/*
+!resource/**/*
